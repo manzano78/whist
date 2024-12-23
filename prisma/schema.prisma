@@ -1,0 +1,58 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id       Int          @id @default(autoincrement())
+  username String       @unique
+  nickname String
+  games    Game[]
+  players  UserPlayer[]
+}
+
+model UserPlayer {
+  id      Int    @id @default(autoincrement())
+  ownerId Int
+  name    String
+  owner   User   @relation(fields: [ownerId], references: [id])
+}
+
+model Game {
+  id             Int           @id @default(autoincrement())
+  ownerId        Int
+  creationDate   DateTime      @default(now())
+  isTerminated   Boolean       @default(false)
+  owner          User          @relation(fields: [ownerId], references: [id])
+  playersInOrder GamePlayer[]
+  roundResults   RoundResult[]
+}
+
+model GamePlayer {
+  id     Int    @id @default(autoincrement())
+  gameId Int
+  name   String
+  weight Int
+  game   Game   @relation(fields: [gameId], references: [id], onDelete: Cascade)
+}
+
+model RoundResult {
+  id                 Int                 @id @default(autoincrement())
+  weight             Int
+  gameId             Int
+  playerRoundResults PlayerRoundResult[]
+  game               Game                @relation(fields: [gameId], references: [id], onDelete: Cascade)
+}
+
+model PlayerRoundResult {
+  id            Int         @id @default(autoincrement())
+  player        String
+  roundResultId Int
+  call          Int
+  result        Int
+  roundResult   RoundResult @relation(fields: [roundResultId], references: [id], onDelete: Cascade)
+}

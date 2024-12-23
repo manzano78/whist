@@ -7,33 +7,40 @@ import {
   ScrollRestoration,
 } from "react-router";
 
-import type { Route } from "./+types/root";
-import "./app.css";
+import type { Route } from "./+types/root"
+import type { ReactNode } from 'react';
+import stylesheetUrl from './presentation/assets/styles.css?url';
+import { CssBaseline, ThemeProvider } from '@mui/material';
+import { ClientOnly } from '~/presentation/utils/hydration';
+import { theme } from '~/presentation/infrastructure/theming/theme';
+import faviconUrl from '~/presentation/assets/favicon.png?url';
 
 export const links: Route.LinksFunction = () => [
-  { rel: "preconnect", href: "https://fonts.googleapis.com" },
-  {
-    rel: "preconnect",
-    href: "https://fonts.gstatic.com",
-    crossOrigin: "anonymous",
-  },
-  {
-    rel: "stylesheet",
-    href: "https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap",
-  },
+  { rel: 'stylesheet', href: stylesheetUrl },
+  { rel: 'icon', href: faviconUrl },
+  { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
+  { rel: 'preconnect', href: 'https://fonts.gstatic.com', crossOrigin: 'anonymous' },
+  { rel: 'stylesheet', href: 'https://fonts.googleapis.com/icon?family=Material+Icons' },
+  { rel: 'stylesheet', href: 'https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap' },
 ];
 
-export function Layout({ children }: { children: React.ReactNode }) {
+export function Layout({ children }: { children: ReactNode }) {
   return (
-    <html lang="en">
+    <html lang="fr" data-color-scheme="dark">
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>Whist</title>
         <Meta />
         <Links />
       </head>
       <body>
-        {children}
+        <ThemeProvider theme={theme}>
+          <ClientOnly>
+            <CssBaseline />
+            {children}
+          </ClientOnly>
+        </ThemeProvider>
         <ScrollRestoration />
         <Scripts />
       </body>
