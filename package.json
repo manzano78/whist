@@ -5,7 +5,8 @@
   "scripts": {
     "build": "react-router build",
     "dev": "react-router dev",
-    "start": "wrangler dev",
+    "start": "wrangler pages dev",
+    "deploy": "npm run build && wrangler pages deploy",
     "typecheck": "react-router typegen && tsc --build --noEmit",
     "db:migrate-dev": "wrangler d1 migrations apply whist --local",
     "db:migrate-prod": "wrangler d1 migrations apply whist --remote"
@@ -21,8 +22,8 @@
     "@mui/material": "^6.2.1",
     "@prisma/adapter-d1": "^6.1.0",
     "@prisma/client": "^6.1.0",
-    "@react-router/node": "^7.0.1",
-    "@react-router/serve": "^7.0.1",
+    "@react-router/cloudflare": "^7.1.0",
+    "@react-router/serve": "^7.1.0",
     "@swc-node/register": "^1.10.9",
     "@tailwindcss/vite": "^4.0.0-beta.2",
     "classnames": "^2.5.1",
@@ -38,12 +39,12 @@
     "open": "^10.1.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "react-router": "^7.0.1"
+    "react-router": "^7.1.0"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20241218.0",
     "@hiogawa/vite-node-miniflare": "^0.1.1",
-    "@react-router/dev": "^7.0.1",
+    "@react-router/dev": "^7.1.0",
     "@types/compression": "^1.7.5",
     "@types/cors": "^2.8.17",
     "@types/helmet": "^0.0.48",

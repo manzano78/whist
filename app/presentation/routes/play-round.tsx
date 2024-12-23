@@ -1,12 +1,11 @@
 import { data, redirect } from 'react-router';
 import type { Route } from './+types/play-round';
-import { getCurrentAppUser } from '~/presentation/infrastructure/app-user-tmp-mock';
-import { saveRoundResultUseCase } from '~/presentation/infrastructure/app';
 import type { RoundResult } from '~/domain/entities/round-result';
 import { PlayRound } from '~/presentation/features/play-round';
-import { gameRepository } from '~/data/game-repository-impl';
+import { getApp } from '~/presentation/infrastructure/app';
 
-export async function loader({ request }: Route.LoaderArgs) {
+export async function loader({ request, context }: Route.LoaderArgs) {
+  const { gameRepository, getCurrentAppUser } = getApp(context);
   const currentAppUser = await getCurrentAppUser(request);
   const currentGame = await gameRepository.getCurrentGame(currentAppUser);
 
@@ -32,7 +31,8 @@ export async function loader({ request }: Route.LoaderArgs) {
   };
 }
 
-export async function action({ request }: Route.ActionArgs) {
+export async function action({ request, context }: Route.ActionArgs) {
+  const { gameRepository, getCurrentAppUser, saveRoundResultUseCase } = getApp(context);
   const currentAppUser = await getCurrentAppUser(request);
   const currentGame = await gameRepository.getCurrentGame(currentAppUser);
 

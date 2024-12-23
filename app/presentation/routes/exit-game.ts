@@ -1,9 +1,9 @@
-import { getCurrentAppUser } from '~/presentation/infrastructure/app-user-tmp-mock';
 import { redirect } from 'react-router';
 import type { Route } from './+types/exit-game';
-import { gameRepository } from '~/data/game-repository-impl';
+import { getApp } from '~/presentation/infrastructure/app';
 
-export async function action({ request }: Route.ActionArgs) {
+export async function action({ request, context }: Route.ActionArgs) {
+  const { getCurrentAppUser, gameRepository } = getApp(context);
   const currentAppUser = await getCurrentAppUser(request);
   const currentGame = await gameRepository.getCurrentGame(currentAppUser);
 

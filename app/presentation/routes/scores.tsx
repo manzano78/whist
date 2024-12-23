@@ -1,10 +1,10 @@
 import { redirect } from 'react-router';
-import { getCurrentAppUser } from '~/presentation/infrastructure/app-user-tmp-mock';
 import type { Route } from './+types/scores';
 import { Scores } from '~/presentation/features/display-scores';
-import { gameRepository } from '~/data/game-repository-impl';
+import { getApp } from '~/presentation/infrastructure/app';
 
-export async function loader({ request }: Route.LoaderArgs) {
+export async function loader({ request, context }: Route.LoaderArgs) {
+  const { getCurrentAppUser, gameRepository } = getApp(context)
   const currentAppUser = await getCurrentAppUser(request);
   const [
     currentGame,

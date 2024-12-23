@@ -71,6 +71,10 @@ import { renderToReadableStream } from "react-dom/server";
 
 export const streamTimeout = 10_000; // ms
 
+export function handleError(error: Error) {
+  console.error(error);
+}
+
 export default async function handleRequest(
   request: Request,
   responseStatusCode: number,
@@ -81,8 +85,7 @@ export default async function handleRequest(
   let shellRendered = false;
   const userAgent = request.headers.get("user-agent");
   const abortController = new AbortController();
-
-  setTimeout(() => {
+  const timeoutId = setTimeout(() => {
     abortController.abort();
   }, streamTimeout + 1_000);
 
@@ -104,6 +107,10 @@ export default async function handleRequest(
       },
     }
   );
+
+  body.allReady.finally(() => {
+    clearTimeout(timeoutId);
+  });
 
   shellRendered = true;
 

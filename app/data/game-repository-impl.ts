@@ -2,8 +2,7 @@ import type { GameRepository } from '~/domain/respositories/game-repository';
 import { Game } from '~/domain/entities/game';
 import type { RoundResult } from '~/domain/entities/round-result';
 import type { AppUser } from '~/domain/entities/app-user';
-import { getPrismaClient } from '~/data/prisma-client';
-import type { Prisma } from '@prisma/client';
+import type { Prisma, PrismaClient } from '@prisma/client';
 
 type GameDto = Prisma.GameGetPayload<{
   include: {
@@ -42,6 +41,8 @@ function toGame(gameDto: GameDto, appUser: AppUser): Game {
 }
 
 export class GameRepositoryImpl implements GameRepository {
+  constructor(private prismaClient: PrismaClient) {}
+  
   async getCurrentGame(appUser: AppUser): Promise<Game | null> {
     const appUserId = appUser.id;
 
@@ -49,7 +50,7 @@ export class GameRepositoryImpl implements GameRepository {
       throw new Error("Can't fetch games of an app user that does not have an ID");
     }
 
-    const gameDto= await getPrismaClient().game.findFirst({
+    const gameDto= await this.prismaClient.game.findFirst({
       where: {
         ownerId: appUserId,
         isTerminated: false,
@@ -77,7 +78,7 @@ export class GameRepositoryImpl implements GameRepository {
     }
 
     if (gameId === null) {
-      const { id } = await getPrismaClient().game.create({
+      const { id } = await this.prismaClient.game.create({
         data: {
           ownerId: appUserId,
           isTerminated: game.isTerminated(),
@@ -105,8 +106,8 @@ export class GameRepositoryImpl implements GameRepository {
 
       game.setId(id);
     } else {
-      await getPrismaClient().$transaction([
-        getPrismaClient().game.update({
+      await this.prismaClient.$transaction([
+        this.prismaClient.game.update({
           where: {
             id: gameId,
           },
@@ -116,17 +117,17 @@ export class GameRepositoryImpl implements GameRepository {
             creationDate: game.creationDate,
           }
         }),
-        getPrismaClient().gamePlayer.deleteMany({
+        this.prismaClient.gamePlayer.deleteMany({
           where: {
             gameId: gameId,
           }
         }),
-        getPrismaClient().roundResult.deleteMany({
+        this.prismaClient.roundResult.deleteMany({
           where: {
             gameId: gameId,
           }
         }),
-        getPrismaClient().gamePlayer.createMany({
+        this.prismaClient.gamePlayer.createMany({
           data: game.playersInOrder.map((player, i) => ({
             name: player,
             weight: i,
@@ -135,7 +136,7 @@ export class GameRepositoryImpl implements GameRepository {
         }),
         ...game.roundResults.map(
           (roundResult, i) =>
-            getPrismaClient().roundResult.create({
+            this.prismaClient.roundResult.create({
               data: {
                 gameId,
                 weight: i,
@@ -160,7 +161,7 @@ export class GameRepositoryImpl implements GameRepository {
       throw new Error("Can't delete a game that does not have an ID");
     }
 
-    await getPrismaClient().game.delete({
+    await this.prismaClient.game.delete({
       where: {
         id
       }
@@ -174,7 +175,7 @@ export class GameRepositoryImpl implements GameRepository {
       throw new Error("Can't fetch games of an app user that does not have an ID");
     }
 
-    const gameDto = await getPrismaClient().game.findFirst({
+    const gameDto = await this.prismaClient.game.findFirst({
       where: {
         ownerId: appUserId,
         isTerminated: true,
@@ -195,5 +196,3 @@ export class GameRepositoryImpl implements GameRepository {
     return gameDto && toGame(gameDto, appUser);
   }
 }
-
-export const gameRepository = new GameRepositoryImpl();

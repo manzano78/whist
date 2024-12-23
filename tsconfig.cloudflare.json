@@ -5,11 +5,10 @@
     "app/**/*",
     "app/**/.server/**/*",
     "app/**/.client/**/*",
-    "database/**/*",
-    "workers/**/*"
+    "functions/**/*",
+    "worker-configuration.d.ts",
   ],
   "compilerOptions": {
-    "composite": true,
     "strict": true,
     "lib": ["DOM", "DOM.Iterable", "ES2022"],
     "types": ["@cloudflare/workers-types", "node", "vite/client"],
