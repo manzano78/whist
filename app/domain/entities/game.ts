@@ -34,9 +34,11 @@ export class Game {
 
     ensureNoGamePlayerDuplicates(playersInOrder);
 
-    const trumpTotalCards = Math.floor(MAX_CARDS / totalPlayers);
-    const noTrumpMaxTotalCards = MAX_CARDS % totalPlayers === 0 ? trumpTotalCards - 1 : trumpTotalCards;
-    this.totalRounds = (noTrumpMaxTotalCards * 2) + NO_TRUMP_TOTAL_ROUNDS;
+    const trumpTotalCards = MAX_CARDS % totalPlayers === 0
+      ? Math.floor(MAX_CARDS / totalPlayers) - 1
+      : Math.floor(MAX_CARDS / totalPlayers);
+    const noTrumpMaxTotalCards = MAX_CARDS % totalPlayers === 0 ? trumpTotalCards + 1 : trumpTotalCards;
+    this.totalRounds = (trumpTotalCards * 2) + NO_TRUMP_TOTAL_ROUNDS;
     this.roundInfos = [];
     this.fillRoundInfos(trumpTotalCards, noTrumpMaxTotalCards);
   }
