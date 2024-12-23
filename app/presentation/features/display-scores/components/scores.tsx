@@ -1,12 +1,13 @@
-import { Box, Button, Typography } from '@mui/material';
-import { RoundScore } from '~/domain/entities/round-score';
-import { RoundInfo } from '~/domain/entities/round-info';
-import { Link } from 'react-router';
+import { Box, Typography } from '@mui/material';
+import type { RoundScore } from '~/domain/entities/round-score';
+import type { RoundInfo } from '~/domain/entities/round-info';
+import { Link, useNavigation } from 'react-router';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import AutoRenewIcon from '@mui/icons-material/Autorenew';
 import { DetailedRanking } from './detailed-ranking';
-import { RoundResult } from '~/domain/entities/round-result';
+import type { RoundResult } from '~/domain/entities/round-result';
 import { DetailedRounds } from '~/presentation/features/display-scores/components/detailed-rounds';
+import { LoadingButton } from '@mui/lab';
 
 interface ScoresProps {
   roundScores: RoundScore[];
@@ -17,17 +18,22 @@ interface ScoresProps {
 }
 
 export function Scores({ roundScores, isTerminated, roundResults, roundInfos, playersInOrder } : ScoresProps) {
+  const navigation = useNavigation();
+  const escapeUrl = isTerminated ? '/new' : '/';
+
   return (
     <Box padding={2} position="relative">
       <Box position="absolute" right={16}>
-        <Button
+        <LoadingButton
           variant="outlined"
           component={Link}
-          to={isTerminated ? '/new' : '/'}
+          to={escapeUrl}
           startIcon={isTerminated ? <AutoRenewIcon /> : <ArrowBackIcon />}
+          loading={navigation.state !== 'idle' && navigation.location.pathname === escapeUrl}
+          loadingPosition="start"
         >
           {isTerminated ? 'Nouvelle partie' : 'Retour à la partie'}
-        </Button>
+        </LoadingButton>
       </Box>
       <Typography variant="h1">
         {isTerminated ? 'Fin de la partie !' : 'Scores provisoires'}

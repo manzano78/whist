@@ -1,4 +1,4 @@
-import { AppUser } from '~/domain/entities/app-user';
+import type { AppUser } from '~/domain/entities/app-user';
 import { appUserRepository } from '~/data/app-user-repository-impl';
 
 const defaultAppUser: AppUser = {

@@ -1,6 +1,6 @@
 import { getCurrentAppUser } from '~/presentation/infrastructure/app-user-tmp-mock';
 import { redirect } from 'react-router';
-import { Route } from './+types/exit-game';
+import type { Route } from './+types/exit-game';
 import { gameRepository } from '~/data/game-repository-impl';
 
 export async function action({ request }: Route.ActionArgs) {

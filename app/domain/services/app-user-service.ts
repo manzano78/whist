@@ -1,4 +1,4 @@
-import { AppUser } from '~/domain/entities/app-user';
+import type { AppUser } from '~/domain/entities/app-user';
 
 export function addPlayersToAppUser(players: string[], appUser: AppUser): boolean {
   const distinctPlayers = new Set(appUser.players);

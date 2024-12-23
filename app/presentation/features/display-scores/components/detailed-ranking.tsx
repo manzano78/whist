@@ -1,5 +1,5 @@
 import { Table, TableBody, TableCell, TableRow } from '@mui/material';
-import { RoundScore } from '~/domain/entities/round-score';
+import type { RoundScore } from '~/domain/entities/round-score';
 
 interface DetailedRankingProps {
   lastRoundScore: RoundScore;

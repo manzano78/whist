@@ -1,7 +1,7 @@
-import { AppUserRepository } from '~/domain/respositories/app-user-repository';
-import { AppUser } from '~/domain/entities/app-user';
+import type { AppUserRepository } from '~/domain/respositories/app-user-repository';
+import type { AppUser } from '~/domain/entities/app-user';
 import { addPlayersToAppUser } from '~/domain/services/app-user-service';
-import { GameRepository } from '~/domain/respositories/game-repository';
+import type { GameRepository } from '~/domain/respositories/game-repository';
 import { Game } from '~/domain/entities/game';
 
 export class CreateNewGameUseCase {

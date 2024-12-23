@@ -1,10 +1,10 @@
-import { AppUserRepository } from '~/domain/respositories/app-user-repository';
-import { AppUser } from '~/domain/entities/app-user';
-import { prismaClient } from '~/data/prisma-client';
+import type { AppUserRepository } from '~/domain/respositories/app-user-repository';
+import type { AppUser } from '~/domain/entities/app-user';
+import { getPrismaClient } from '~/data/prisma-client';
 
 class AppUserRepositoryImpl implements AppUserRepository {
   async getAppUser(username: string): Promise<AppUser | null> {
-    const user = await prismaClient.user.findUnique({
+    const user = await getPrismaClient().user.findUnique({
       where: {
         username,
       },
@@ -25,7 +25,7 @@ class AppUserRepositoryImpl implements AppUserRepository {
     let id = appUser.id;
 
     if (id === null) {
-      const userDto = await prismaClient.user.create({
+      const userDto = await getPrismaClient().user.create({
         data: {
           username: appUser.username,
           nickname: appUser.nickname,
@@ -35,7 +35,7 @@ class AppUserRepositoryImpl implements AppUserRepository {
       appUser.id = userDto.id;
       id = userDto.id;
     } else {
-      await prismaClient.userPlayer.deleteMany({
+      await getPrismaClient().userPlayer.deleteMany({
         where: {
           ownerId: id
         }
@@ -43,7 +43,7 @@ class AppUserRepositoryImpl implements AppUserRepository {
     }
 
     if (appUser.players.length !== 0) {
-      prismaClient.userPlayer.createMany({
+      getPrismaClient().userPlayer.createMany({
         data: appUser.players.map((name) => ({
           name,
           ownerId: id,

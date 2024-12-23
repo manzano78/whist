@@ -1,4 +1,4 @@
-import { RoundInfo } from '~/domain/entities/round-info';
+import type { RoundInfo } from '~/domain/entities/round-info';
 import {
   Alert,
   Box,
@@ -15,14 +15,16 @@ import {
   TextField,
   Typography
 } from '@mui/material';
-import { Ranking } from '~/domain/entities/ranking';
-import { Form, Link } from 'react-router';
-import { useState, FormEventHandler, useMemo, useRef, useEffect } from 'react';
+import type { Ranking } from '~/domain/entities/ranking';
+import { Form, Link, useNavigation } from 'react-router';
+import { useState, type FormEventHandler, useMemo, useRef, useEffect } from 'react';
 import SportsScoreIcon from '@mui/icons-material/SportsScore';
 import BackHandIcon from '@mui/icons-material/BackHand';
 import ExitToAppIcon from '@mui/icons-material/Logout';
 import UndoIcon from '@mui/icons-material/Undo';
 import OutlinedFlagIcon from '@mui/icons-material/OutlinedFlag';
+import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
+import { LoadingButton } from '@mui/lab';
 
 interface PlayRoundProps {
   round: RoundInfo;
@@ -67,6 +69,7 @@ export function PlayRound({ round, totalRounds, ranking, replayRound, roundId, g
   const [isExitConfirmDialogOpen, setIsExitConfirmDialogOpen] = useState(false);
   const [error, setError] = useState<string | null>(initialValues?.error ?? null);
   const currentInputRef = useRef<HTMLInputElement>(null);
+  const navigation = useNavigation();
   const hasError = !!error;
   const currentCallIndex = isResettingPreviousCall ? calls.length - 1 : calls.length;
   const currentResultIndex = resetResultIndex !== null ? resetResultIndex : results.length;
@@ -321,15 +324,17 @@ export function PlayRound({ round, totalRounds, ranking, replayRound, roundId, g
               </ul>
 
               <Box marginTop={4}>
-                <Button
+                <LoadingButton
                   component={Link}
                   size="large"
                   variant="outlined"
                   to="/scores"
                   startIcon={<SportsScoreIcon />}
+                  loadingPosition="start"
+                  loading={navigation.state === 'loading' && navigation.location.pathname === '/scores'}
                 >
                   Scores détaillés
-                </Button>
+                </LoadingButton>
               </Box>
             </Box>
           )}
@@ -440,9 +445,15 @@ export function PlayRound({ round, totalRounds, ranking, replayRound, roundId, g
                   </Alert>
                 </Box>
                 <Box display={results.length !== playersInRoundOrder.length ? 'none' : undefined}>
-                  <Button type="submit" variant="outlined">
-                    {index === totalRounds ? 'Fin de la partie' : 'Tour suivant >'}
-                  </Button>
+                  <LoadingButton
+                    type="submit"
+                    variant="outlined"
+                    endIcon={<ArrowForwardIosIcon />}
+                    loading={navigation.state !== 'idle' && navigation.location.pathname === '/'}
+                    loadingPosition="end"
+                  >
+                    {index === totalRounds ? 'Fin de la partie' : 'Tour suivant'}
+                  </LoadingButton>
                 </Box>
               </Box>
             )}
@@ -463,9 +474,15 @@ export function PlayRound({ round, totalRounds, ranking, replayRound, roundId, g
               <Form action="/exit" method="post">
                 <Box display="flex" gap={2}>
                   <Button variant="outlined" type="button" onClick={() => setIsExitConfirmDialogOpen(false)}>Non, continuer la partie</Button>
-                  <Button color="error" variant="outlined" type="submit">
+                  <LoadingButton
+                    color="error"
+                    variant="outlined"
+                    type="submit"
+                    loadingPosition="center"
+                    loading={(navigation.state === 'submitting' && navigation.location.pathname === '/exit') || (navigation.state === 'loading' && navigation.location.pathname === '/new')}
+                  >
                     Oui, abandonner la partie
-                  </Button>
+                  </LoadingButton>
                 </Box>
               </Form>
             </DialogActions>

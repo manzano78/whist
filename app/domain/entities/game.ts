@@ -7,7 +7,7 @@ import { createTerminatedGameError } from '~/domain/entities/errors/terminated-g
 import { createIdReassignError } from '~/domain/entities/errors/id-reassign-error';
 import { createMinPlayersError } from '~/domain/entities/errors/min-players-error';
 import { createPlayerDuplicatesError } from '~/domain/entities/errors/duplicate-players-error';
-import { Ranking } from '~/domain/entities/ranking';
+import type { Ranking } from '~/domain/entities/ranking';
 
 const MAX_CARDS = 52;
 const NO_TRUMP_TOTAL_ROUNDS = 2;

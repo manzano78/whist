@@ -2,7 +2,7 @@ import { data, redirect } from 'react-router';
 import type { Route } from './+types/play-round';
 import { getCurrentAppUser } from '~/presentation/infrastructure/app-user-tmp-mock';
 import { saveRoundResultUseCase } from '~/presentation/infrastructure/app';
-import { RoundResult } from '~/domain/entities/round-result';
+import type { RoundResult } from '~/domain/entities/round-result';
 import { PlayRound } from '~/presentation/features/play-round';
 import { gameRepository } from '~/data/game-repository-impl';
 

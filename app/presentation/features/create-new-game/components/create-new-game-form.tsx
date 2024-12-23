@@ -1,5 +1,6 @@
 import { useRef, useState } from 'react';
 import { Alert, Box, Button, IconButton } from '@mui/material';
+import { LoadingButton } from '@mui/lab';
 import { Form, useNavigation } from 'react-router';
 import DeleteIcon from '@mui/icons-material/DeleteForever';
 import AddIcon from '@mui/icons-material/Add';
@@ -60,9 +61,15 @@ export function CreateNewGameForm({ existingPlayers, errorMessage, defaultPlayer
         </Box>
         <Box marginTop={4} display="flex" alignItems="center" position="absolute" width="max-content" gap={3} height={50}>
           <div>
-            <Button type="submit" variant="contained" startIcon={<OutlinedFlagIcon />}>
+            <LoadingButton
+              loading={navigation.state !== 'idle'}
+              loadingPosition="start"
+              type="submit"
+              variant="contained"
+              startIcon={<OutlinedFlagIcon />
+            }>
               C'est parti !
-            </Button>
+            </LoadingButton>
           </div>
           {errorMessage && navigation.state !== 'submitting' ? (
             <Box position="absolute" top={0} left={90} display="flex" alignItems="center">

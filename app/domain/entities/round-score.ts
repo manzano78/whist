@@ -1,4 +1,4 @@
-import { Ranking } from '~/domain/entities/ranking';
+import type { Ranking } from '~/domain/entities/ranking';
 
 export interface RoundScore {
   cumulativeRanking: Ranking;

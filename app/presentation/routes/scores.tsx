@@ -1,6 +1,6 @@
 import { redirect } from 'react-router';
 import { getCurrentAppUser } from '~/presentation/infrastructure/app-user-tmp-mock';
-import { Route } from './+types/scores';
+import type { Route } from './+types/scores';
 import { Scores } from '~/presentation/features/display-scores';
 import { gameRepository } from '~/data/game-repository-impl';
 

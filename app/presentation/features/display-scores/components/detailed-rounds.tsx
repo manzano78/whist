@@ -1,6 +1,6 @@
-import { RoundScore } from '~/domain/entities/round-score';
-import { RoundInfo } from '~/domain/entities/round-info';
-import { RoundResult } from '~/domain/entities/round-result';
+import type { RoundScore } from '~/domain/entities/round-score';
+import type { RoundInfo } from '~/domain/entities/round-info';
+import type { RoundResult } from '~/domain/entities/round-result';
 import { Box, Table, TableBody, TableCell, TableHead, TableRow } from '@mui/material';
 import NorthEastIcon from '@mui/icons-material/NorthEast';
 import SouthEastIcon from '@mui/icons-material/SouthEast';

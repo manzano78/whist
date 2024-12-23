@@ -1,6 +1,6 @@
-import { RoundResult } from '~/domain/entities/round-result';
-import { Game } from '~/domain/entities/game';
-import { GameRepository } from '~/domain/respositories/game-repository';
+import type { RoundResult } from '~/domain/entities/round-result';
+import type { Game } from '~/domain/entities/game';
+import type { GameRepository } from '~/domain/respositories/game-repository';
 
 export class SaveRoundResultUseCase {
   constructor(

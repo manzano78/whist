@@ -1,4 +1,4 @@
-.env
+.env.t
 !.env.example
 .DS_Store
 .react-router

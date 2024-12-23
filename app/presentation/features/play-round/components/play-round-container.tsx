@@ -1,5 +1,5 @@
-import { RoundInfo } from '~/domain/entities/round-info';
-import { Ranking } from '~/domain/entities/ranking';
+import type { RoundInfo } from '~/domain/entities/round-info';
+import type { Ranking } from '~/domain/entities/ranking';
 import { useState } from 'react';
 import { PlayRound } from './play-round';
 

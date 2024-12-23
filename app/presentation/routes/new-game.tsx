@@ -1,7 +1,7 @@
 import { createNewGameUseCase } from '~/presentation/infrastructure/app';
 import { getCurrentAppUser } from '~/presentation/infrastructure/app-user-tmp-mock';
-import { data, redirect, ShouldRevalidateFunction } from 'react-router';
-import { Route } from './+types/new-game';
+import { data, redirect, type ShouldRevalidateFunction } from 'react-router';
+import type { Route } from './+types/new-game';
 import { isMinPlayersError } from '~/domain/entities/errors/min-players-error';
 import { isPlayerDuplicatesError } from '~/domain/entities/errors/duplicate-players-error';
 import { stringifyDuplicatedPlayersMessage } from '~/presentation/features/create-new-game/utils';

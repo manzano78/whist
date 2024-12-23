@@ -1,5 +1,5 @@
-import { Game } from '~/domain/entities/game';
-import { AppUser } from '~/domain/entities/app-user';
+import type { Game } from '~/domain/entities/game';
+import type { AppUser } from '~/domain/entities/app-user';
 
 export interface GameRepository {
   getCurrentGame(appUser: AppUser): Promise<Game | null>;
