@@ -6,10 +6,12 @@
     "build": "react-router build",
     "dev": "react-router dev",
     "start": "wrangler pages dev",
-    "deploy": "npm run build && wrangler pages deploy",
     "typecheck": "react-router typegen && tsc --build --noEmit",
     "db:migrate-dev": "wrangler d1 migrations apply whist --local",
     "db:migrate-prod": "wrangler d1 migrations apply whist --remote"
+  },
+  "engines": {
+    "node": ">=20"
   },
   "dependencies": {
     "@emotion/css": "^11.13.5",
