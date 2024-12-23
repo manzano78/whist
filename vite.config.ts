@@ -5,7 +5,15 @@ import tsconfigPaths from "vite-tsconfig-paths";
 import { PrismaD1 } from '@prisma/adapter-d1';
 import { PrismaClient } from '@prisma/client';
 
-export default defineConfig({
+export default defineConfig(({ isSsrBuild }) => ({
+  build: {
+    rollupOptions: isSsrBuild
+      ? {
+        input: "./workers/app.ts",
+        external: ['@prisma/client']
+      }
+      : undefined,
+  },
   ssr: {
     noExternal: [
       '@mui/material',
@@ -13,8 +21,12 @@ export default defineConfig({
       '@mui/utils',
       '@mui/system',
       '@mui/styled-engine',
+      // '@prisma/debug', '@prisma/d1-adapter', '@prisma/client', '@prisma/driver-adapter-utils'
     ],
+    // noExternal: ['@prisma/debug', '@prisma/d1-adapter', '@prisma/client'],
     target: "webworker",
+    // noExternal: true,
+    external: ["node:async_hooks"],
     resolve: {
       conditions: ["workerd", "browser"],
     },
@@ -43,4 +55,4 @@ export default defineConfig({
     reactRouter(),
     tsconfigPaths(),
   ],
-});
+}));

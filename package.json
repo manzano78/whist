@@ -5,7 +5,8 @@
   "scripts": {
     "build": "react-router build",
     "dev": "react-router dev",
-    "start": "wrangler pages dev",
+    "start": "wrangler dev",
+    "deploy": "wrangler deploy",
     "typecheck": "react-router typegen && tsc --build --noEmit",
     "db:migrate-dev": "wrangler d1 migrations apply whist --local",
     "db:migrate-prod": "wrangler d1 migrations apply whist --remote"
