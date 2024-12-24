@@ -10,8 +10,8 @@ import { createPlayerDuplicatesError } from '~/domain/entities/errors/duplicate-
 import type { Ranking } from '~/domain/entities/ranking';
 
 const MAX_CARDS = 52;
-const NO_TRUMP_TOTAL_ROUNDS = 2;
 const BASE_WIN_POINTS = 20;
+const BASE_LOOSE_POINTS = -20;
 const WIN_ITEM_POINTS = 10;
 const LOOSE_ITEM_POINTS = 10;
 
@@ -159,7 +159,7 @@ export class Game {
   private static getPlayerRoundPoints({ call, result }: RoundResult[string]): number {
     const delta = Math.abs(result - call);
 
-    return delta === 0 ? BASE_WIN_POINTS + (call * WIN_ITEM_POINTS) : -(delta * LOOSE_ITEM_POINTS);
+    return delta === 0 ? BASE_WIN_POINTS + (call * WIN_ITEM_POINTS) : BASE_LOOSE_POINTS - ((delta - 1) * LOOSE_ITEM_POINTS);
   }
 
   private static createRoundCumulativeRanking(roundScoreResults: RoundScore['results']): RoundScore['cumulativeRanking'] {
