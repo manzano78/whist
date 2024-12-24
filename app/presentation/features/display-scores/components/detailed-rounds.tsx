@@ -5,6 +5,8 @@ import { Box, Table, TableBody, TableCell, TableHead, TableRow } from '@mui/mate
 import NorthEastIcon from '@mui/icons-material/NorthEast';
 import SouthEastIcon from '@mui/icons-material/SouthEast';
 import ArrowRightAltIcon from '@mui/icons-material/ArrowRightAlt';
+import type { RoundDirection } from '~/domain/entities/round-direction';
+import type { ReactElement } from 'react';
 
 interface DetailedRoundsProps {
   roundScores: RoundScore[];
@@ -12,6 +14,14 @@ interface DetailedRoundsProps {
   roundResults: RoundResult[];
   playersInOrder: string[];
 }
+
+const directionIcons: Record<RoundDirection, ReactElement> = {
+  asc: <NorthEastIcon />,
+  desc: <SouthEastIcon />,
+  'no-trump': <ArrowRightAltIcon />,
+  'no-trump-1': <ArrowRightAltIcon />,
+  'no-trump-2': <ArrowRightAltIcon />,
+};
 
 export function DetailedRounds(
   {
@@ -70,9 +80,7 @@ export function DetailedRounds(
                     #{index}
                   </strong>
                   &nbsp;
-                  {direction === 'asc' && <NorthEastIcon />}
-                  {direction === 'desc' && <SouthEastIcon />}
-                  {(direction === 'no-trump-1' || (direction === 'no-trump-2')) && <ArrowRightAltIcon />}
+                  {directionIcons[direction]}
                 </Box>
                 <Box>
                   <strong>{totalCardsPerPlayer}</strong>&nbsp;carte{totalCardsPerPlayer > 1 ? 's' : ''}

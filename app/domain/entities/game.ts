@@ -38,9 +38,10 @@ export class Game {
       ? Math.floor(MAX_CARDS / totalPlayers) - 1
       : Math.floor(MAX_CARDS / totalPlayers);
     const noTrumpMaxTotalCards = MAX_CARDS % totalPlayers === 0 ? trumpTotalCards + 1 : trumpTotalCards;
-    this.totalRounds = (trumpTotalCards * 2) + NO_TRUMP_TOTAL_ROUNDS;
+    const noTrumpTotalRounds: 1 | 2 = ((trumpTotalCards * 2) + 1) % totalPlayers === 1 ? 2 : 1;
+    this.totalRounds = (trumpTotalCards * 2) + noTrumpTotalRounds;
     this.roundInfos = [];
-    this.fillRoundInfos(trumpTotalCards, noTrumpMaxTotalCards);
+    this.fillRoundInfos(trumpTotalCards, noTrumpMaxTotalCards, noTrumpTotalRounds);
   }
 
   static createNew(owner: AppUser, playersInOrder: string[]): Game {
@@ -200,18 +201,20 @@ export class Game {
   private fillRoundInfos(
     trumpTotalCards: number,
     noTrumpMaxTotalCards: number,
+    noTrumpTotalRounds: 1 | 2,
   ): void {
-    const nextRoundInfo = this.computeNextRoundInfo(trumpTotalCards, noTrumpMaxTotalCards);
+    const nextRoundInfo = this.computeNextRoundInfo(trumpTotalCards, noTrumpMaxTotalCards, noTrumpTotalRounds);
 
     if (nextRoundInfo) {
       this.roundInfos.push(nextRoundInfo);
-      this.fillRoundInfos(trumpTotalCards, noTrumpMaxTotalCards,);
+      this.fillRoundInfos(trumpTotalCards, noTrumpMaxTotalCards, noTrumpTotalRounds);
     }
   }
 
   private computeNextRoundInfo(
     trumpTotalCards: number,
     noTrumpMaxTotalCards: number,
+    noTrumpTotalRounds: 1 | 2,
   ): RoundInfo | null{
     const { length: totalPassedRounds} = this.roundInfos;
     const { totalRounds, playersInOrder } = this;
@@ -232,9 +235,9 @@ export class Game {
       direction = 'asc';
       totalCardsPerPlayer = totalPassedRounds + 1;
     } else if (totalPassedRounds === trumpTotalCards) {
-      direction = 'no-trump-1';
+      direction = noTrumpTotalRounds === 1 ? 'no-trump' : 'no-trump-1';
       totalCardsPerPlayer = noTrumpMaxTotalCards;
-    } else if (totalPassedRounds === trumpTotalCards + 1) {
+    } else if (totalPassedRounds === trumpTotalCards + 1 && noTrumpTotalRounds === 2) {
       direction = 'no-trump-2';
       totalCardsPerPlayer = noTrumpMaxTotalCards;
     } else {

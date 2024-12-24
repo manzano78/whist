@@ -292,6 +292,7 @@ export function PlayRound({ round, totalRounds, ranking, replayRound, roundId, g
                 <strong>
                   {direction === 'asc' && 'En montée'}
                   {direction === 'desc' && 'En descente'}
+                  {direction === 'no-trump' && 'Sans atout'}
                   {direction === 'no-trump-1' && <>1<sup>er</sup> tour de sans atout</>}
                   {direction === 'no-trump-2' && <>2<sup>ème</sup> tour de sans atout</>}
                 </strong>

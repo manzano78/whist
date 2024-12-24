@@ -1,4 +1,4 @@
-export type RoundDirection = 'asc' | 'no-trump-1' | 'no-trump-2' | 'desc';
+import type { RoundDirection } from '~/domain/entities/round-direction';
 
 export interface RoundInfo {
   index: number;
