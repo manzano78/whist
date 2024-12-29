@@ -1,9 +1,10 @@
-workers_dev = true
+#workers_dev = true
 name = "whist"
-compatibility_date = "2024-12-23"
-compatibility_flags = ["nodejs_compat"]
-main = "./build/server/index.js"
-assets = { directory = "./build/client/" }
+compatibility_date = "2024-12-29"
+pages_build_output_dir = "./build/client"
+#compatibility_flags = ["nodejs_compat"]
+#main = "./build/server/index.js"
+#assets = { directory = "./build/client/" }
 [[d1_databases]]
 binding = "DB"
 database_name = "whist"
