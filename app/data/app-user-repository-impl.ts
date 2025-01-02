@@ -23,34 +23,37 @@ export class AppUserRepositoryImpl implements AppUserRepository {
   }
 
   async saveAppUser(appUser: AppUser): Promise<void> {
-    let id = appUser.id;
+    const id = appUser.id;
 
     if (id === null) {
-      const userDto = await this.prismaClient.user.create({
+      const { id: userId } = await this.prismaClient.user.create({
         data: {
           username: appUser.username,
           nickname: appUser.nickname,
+          players: {
+            create: appUser.players.map((name) => ({
+              name,
+              ownerId: id,
+            }))
+          }
         }
       });
 
-      appUser.id = userDto.id;
-      id = userDto.id;
+      appUser.id = userId;
     } else {
-      await this.prismaClient.userPlayer.deleteMany({
-        where: {
-          ownerId: id
-        }
-      });
-    }
-
-    if (appUser.players.length !== 0) {
-      this.prismaClient.userPlayer.createMany({
-        data: appUser.players.map((name) => ({
-          name,
-          ownerId: id,
-        }))
-      });
+      await this.prismaClient.$transaction([
+        this.prismaClient.userPlayer.deleteMany({
+          where: {
+            ownerId: id
+          }
+        }),
+        this.prismaClient.userPlayer.createMany({
+          data: appUser.players.map((name) => ({
+            name,
+            ownerId: id,
+          }))
+        })
+      ]);
     }
   }
 }
-

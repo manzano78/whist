@@ -24,7 +24,7 @@ model UserPlayer {
 }
 
 model Game {
-  id             Int           @id @default(autoincrement())
+  id             String           @id @default(uuid())
   ownerId        Int
   creationDate   DateTime      @default(now())
   isTerminated   Boolean       @default(false)
@@ -35,7 +35,7 @@ model Game {
 
 model GamePlayer {
   id     Int    @id @default(autoincrement())
-  gameId Int
+  gameId String
   name   String
   weight Int
   game   Game   @relation(fields: [gameId], references: [id], onDelete: Cascade)
@@ -44,7 +44,7 @@ model GamePlayer {
 model RoundResult {
   id                 Int                 @id @default(autoincrement())
   weight             Int
-  gameId             Int
+  gameId             String
   playerRoundResults PlayerRoundResult[]
   game               Game                @relation(fields: [gameId], references: [id], onDelete: Cascade)
 }

@@ -20,7 +20,7 @@ export class Game {
   public readonly roundInfos: RoundInfo[];
 
   constructor(
-    private id: number | null,
+    private id: string | null,
     public readonly owner: Readonly<AppUser>,
     public readonly creationDate: Date,
     public readonly playersInOrder: string[],
@@ -54,11 +54,11 @@ export class Game {
     );
   }
 
-  getId(): number | null {
+  getId(): string | null {
     return this.id;
   }
 
-  setId(id: number) {
+  setId(id: string) {
     if (this.id !== null) {
       throw createIdReassignError();
     }

@@ -1,7 +1,0 @@
--- CreateTable
-CREATE TABLE "UserPlayer" (
-    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-    "ownerId" INTEGER NOT NULL,
-    "name" TEXT NOT NULL,
-    CONSTRAINT "UserPlayer_ownerId_fkey" FOREIGN KEY ("ownerId") REFERENCES "User" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
-);
