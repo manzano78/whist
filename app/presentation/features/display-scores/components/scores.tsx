@@ -18,23 +18,8 @@ interface ScoresProps {
 }
 
 export function Scores({ roundScores, isTerminated, roundResults, roundInfos, playersInOrder } : ScoresProps) {
-  const navigation = useNavigation();
-  const escapeUrl = isTerminated ? '/new' : '/';
-
   return (
     <Box padding={2} position="relative">
-      <Box position="absolute" right={16}>
-        <LoadingButton
-          variant="outlined"
-          component={Link}
-          to={escapeUrl}
-          startIcon={isTerminated ? <AutoRenewIcon /> : <ArrowBackIcon />}
-          loading={navigation.state !== 'idle' && navigation.location.pathname === escapeUrl}
-          loadingPosition="start"
-        >
-          {isTerminated ? 'Nouvelle partie' : 'Retour à la partie'}
-        </LoadingButton>
-      </Box>
       <Typography variant="h1">
         {isTerminated ? 'Fin de la partie !' : 'Scores provisoires'}
       </Typography>

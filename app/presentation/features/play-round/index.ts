@@ -1,1 +1,1 @@
-export { PlayRoundContainer as PlayRound } from './components/play-round-container'
+export { PlayRoundForm } from './components/play-round-form'

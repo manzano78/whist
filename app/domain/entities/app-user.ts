@@ -1,5 +1,5 @@
 export interface AppUser {
-  id: number | null;
+  id: number;
   username: string;
   nickname: string;
   players: string[];

@@ -1,31 +1,35 @@
-import { useState } from 'react';
+import { useMemo } from 'react';
 import { Alert, Box } from '@mui/material';
 
 interface RegisterRoundResultsFormProps {
-  defaultTotalCardsPerPlayer: number;
-  defaultCalls: { [player: string]: number };
+  totalCardsPerPlayer: number;
+  calls: number[];
 }
 
 export function RoundFightInfo(
   {
-    defaultCalls,
-    defaultTotalCardsPerPlayer,
+    calls,
+    totalCardsPerPlayer,
   }: RegisterRoundResultsFormProps) {
-  const [{ isFight, delta }] = useState(() => {
-    const totalCalls = Object.values(defaultCalls).reduce((acc, call) => acc + call, 0);
-    const isFight = totalCalls > defaultTotalCardsPerPlayer;
-    const delta = Math.abs(totalCalls - defaultTotalCardsPerPlayer);
+  const {
+    isFight,
+    delta,
+  } = useMemo(() => {
+    const totalCalls = calls.reduce((acc, call) => acc + call, 0);
+    const isFight = totalCalls > totalCardsPerPlayer;
+    const delta = Math.abs(totalCalls - totalCardsPerPlayer);
 
     return {
       isFight,
       delta,
     };
-  });
+  }, [calls, totalCardsPerPlayer]);
 
   return (
     <Box width="max-content">
-      <Alert variant="filled" severity="info">
-        <strong>{isFight ? 'ON SE BAT' : 'ON NE SE BAT PAS'}</strong> de <strong>{delta}</strong> !
+      <Alert variant="filled" severity={isFight ? 'warning' : 'info'}>
+        <strong>{isFight ? 'ON SE BAT' : 'ON NE SE BAT PAS'}</strong> de <strong>{delta}</strong> !&nbsp;
+        {isFight ? '🔥' : '🥶'}
       </Alert>
     </Box>
   );

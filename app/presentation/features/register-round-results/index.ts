@@ -1,1 +1,1 @@
-export { RegisterRoundResultsForm } from './components/register-round-results-form';
+export { RoundResultsRegistration } from './components/round-results-registration';

@@ -24,13 +24,40 @@ model UserPlayer {
 }
 
 model Game {
-  id             String           @id @default(uuid())
+  id             String        @id @default(uuid())
   ownerId        Int
   creationDate   DateTime      @default(now())
   isTerminated   Boolean       @default(false)
   owner          User          @relation(fields: [ownerId], references: [id])
   playersInOrder GamePlayer[]
   roundResults   RoundResult[]
+  roundDraft     RoundDraft?
+}
+
+model RoundDraft {
+  id         Int      @id @default(autoincrement())
+  game       Game     @relation(fields: [gameId], references: [id], onDelete: Cascade)
+  gameId     String   @unique
+  roundIndex Int
+  callIndex  Int?
+  isInError  Boolean?
+  isFixing   Boolean?
+  calls RoundDraftCall[]
+  results RoundDraftResult[]
+}
+
+model RoundDraftCall {
+  id     Int    @id @default(autoincrement())
+  call Int
+  roundDraftId Int
+  roundDraft RoundDraft @relation(fields: [roundDraftId], references: [id], onDelete: Cascade)
+}
+
+model RoundDraftResult {
+  id     Int    @id @default(autoincrement())
+  result Int
+  roundDraftId Int
+  roundDraft RoundDraft @relation(fields: [roundDraftId], references: [id], onDelete: Cascade)
 }
 
 model GamePlayer {

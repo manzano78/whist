@@ -10,18 +10,7 @@ import { getApp } from '~/presentation/infrastructure/app';
 export async function loader({ request, context }: Route.LoaderArgs) {
   const { gameRepository, getCurrentAppUser } = getApp(context);
   const currentAppUser = await getCurrentAppUser(request);
-  const [
-    currentGame,
-    lastTerminatedGame
-  ] = await Promise.all([
-    gameRepository.getCurrentGame(currentAppUser),
-    gameRepository.getLastTerminatedGame(currentAppUser),
-  ]);
-
-  if (currentGame) {
-    throw redirect('/');
-  }
-
+  const lastTerminatedGame = await gameRepository.getLastTerminatedGame(currentAppUser.id);
   const defaultPlayers = lastTerminatedGame?.playersInOrder;
   const existingPlayers = [...currentAppUser.players].sort();
 
@@ -29,7 +18,7 @@ export async function loader({ request, context }: Route.LoaderArgs) {
 }
 
 export async function action({ request, context }: Route.ActionArgs) {
-  const { gameRepository, getCurrentAppUser, createNewGameUseCase } = getApp(context);
+  const { getCurrentAppUser, createNewGameUseCase } = getApp(context);
   const [formData, currentAppUser] = await Promise.all([
     request.formData(),
     getCurrentAppUser(request)
@@ -37,7 +26,9 @@ export async function action({ request, context }: Route.ActionArgs) {
   const playersInOrder = formData.getAll('player') as string[];
 
   try {
-    await createNewGameUseCase.createNewGame(currentAppUser, playersInOrder);
+    const { id: gameId } = await createNewGameUseCase.createNewGame(currentAppUser, playersInOrder);
+
+    return redirect(`/games/${gameId}/play`);
   } catch (error) {
     let errorMessage: string | undefined;
 
@@ -51,9 +42,6 @@ export async function action({ request, context }: Route.ActionArgs) {
 
     return data({ errorMessage }, 400);
   }
-
-  // todo => return when PR is released
-  throw redirect('/');
 }
 
 export const shouldRevalidate: ShouldRevalidateFunction = ({ defaultShouldRevalidate }) => defaultShouldRevalidate;
