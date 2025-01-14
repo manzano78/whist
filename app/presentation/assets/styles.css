@@ -13,3 +13,9 @@ input[type=number] {
 ul {
     padding-left: 1.25rem;
 }
+
+html, body {
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+}

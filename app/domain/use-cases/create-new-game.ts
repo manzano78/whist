@@ -1,22 +1,20 @@
 import type { AppUserRepository } from '~/domain/respositories/app-user-repository';
 import type { AppUser } from '~/domain/entities/app-user';
-import { addPlayersToAppUser } from '~/domain/services/app-user-service';
 import type { GameRepository } from '~/domain/respositories/game-repository';
-import { Game } from '~/domain/entities/game';
+import type { Game } from '~/domain/entities/game';
 
 export class CreateNewGameUseCase {
   constructor(
-    private appUserRepository: AppUserRepository,
-    private gameRepository: GameRepository,
+    private readonly appUserRepository: AppUserRepository,
+    private readonly gameRepository: GameRepository,
   ) {}
 
   async createNewGame(owner: AppUser, playersInOrder: string[]): Promise<Game> {
-    const game = Game.createNew(owner, playersInOrder);
-    const didAddNewPlayersToAppUser = addPlayersToAppUser(playersInOrder, owner);
-
-    await Promise.all([
-      this.gameRepository.saveGame(game),
-      didAddNewPlayersToAppUser && this.appUserRepository.saveAppUser(owner)
+    const ownerPlayers = new Set(owner.players);
+    const newPlayers = playersInOrder.filter((player) => !ownerPlayers.has(player));
+    const [game] = await Promise.all([
+      this.gameRepository.createGame(owner.id, playersInOrder),
+      newPlayers.length !== 0 && this.appUserRepository.createAppUserPlayers(owner.id, newPlayers),
     ]);
 
     return game;

@@ -4,7 +4,8 @@ import type { PrismaClient } from '@prisma/client';
 
 export class AppUserRepositoryImpl implements AppUserRepository {
   constructor(private prismaClient: PrismaClient) {}
-  async getAppUser(username: string): Promise<AppUser | null> {
+
+  async getAppUserByUsername(username: string): Promise<AppUser | null> {
     const user = await this.prismaClient.user.findUnique({
       where: {
         username,
@@ -22,35 +23,25 @@ export class AppUserRepositoryImpl implements AppUserRepository {
     };
   }
 
-  async saveAppUser(appUser: AppUser): Promise<void> {
-    let id = appUser.id;
+  async createAppUserPlayers(appUserId: AppUser["id"], players: string[]): Promise<void> {
+    await this.prismaClient.userPlayer.createMany({
+      data: players.map((name) => ({ name, ownerId: appUserId }))
+    });
+  }
 
-    if (id === null) {
-      const userDto = await this.prismaClient.user.create({
-        data: {
-          username: appUser.username,
-          nickname: appUser.nickname,
-        }
-      });
+  async createAppUser(username: string, nickname: string): Promise<AppUser> {
+    const { id } = await this.prismaClient.user.create({
+      data: {
+        username,
+        nickname,
+      }
+    });
 
-      appUser.id = userDto.id;
-      id = userDto.id;
-    } else {
-      await this.prismaClient.userPlayer.deleteMany({
-        where: {
-          ownerId: id
-        }
-      });
-    }
-
-    if (appUser.players.length !== 0) {
-      this.prismaClient.userPlayer.createMany({
-        data: appUser.players.map((name) => ({
-          name,
-          ownerId: id,
-        }))
-      });
-    }
+    return {
+      id,
+      username,
+      nickname,
+      players: [],
+    };
   }
 }
-

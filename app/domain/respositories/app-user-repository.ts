@@ -1,6 +1,7 @@
 import type { AppUser } from '~/domain/entities/app-user';
 
 export interface AppUserRepository {
-  getAppUser(username: string): Promise<AppUser | null>;
-  saveAppUser(appUser: AppUser): Promise<void>;
+  getAppUserByUsername(username: string): Promise<AppUser | null>;
+  createAppUser(username: string, nickname: string): Promise<AppUser>;
+  createAppUserPlayers(appUserId: AppUser['id'], players: string[]): Promise<void>;
 }

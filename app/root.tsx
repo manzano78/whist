@@ -4,16 +4,19 @@ import {
   Meta,
   Outlet,
   Scripts,
-  ScrollRestoration,
-} from "react-router";
+  ScrollRestoration, useLoaderData,
+} from 'react-router';
 
-import type { Route } from "./+types/root"
+import type { Info, Route } from './+types/root';
 import type { ReactNode } from 'react';
 import stylesheetUrl from './presentation/assets/styles.css?url';
 import { CssBaseline, ThemeProvider } from '@mui/material';
 import { ClientOnly } from '~/presentation/utils/hydration';
 import { theme } from '~/presentation/infrastructure/theming/theme';
 import faviconUrl from '~/presentation/assets/favicon.png?url';
+import { isMobileUserAgent } from '~/presentation/utils/user-agent-utils';
+import { IsMobileContext } from '~/presentation/contexts/is-mobile-context';
+import { MainLayout } from '~/presentation/features/display-main-layout';
 
 export const links: Route.LinksFunction = () => [
   { rel: 'stylesheet', href: stylesheetUrl },
@@ -24,7 +27,16 @@ export const links: Route.LinksFunction = () => [
   { rel: 'stylesheet', href: 'https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap' },
 ];
 
+export function loader({ request }: Route.LoaderArgs) {
+  const isMobile = isMobileUserAgent(request.headers.get('User-Agent'));
+
+  return { isMobile }
+}
+
 export function Layout({ children }: { children: ReactNode }) {
+  const rootLoaderData = useLoaderData<Info['loaderData']>();
+  const isMobile = rootLoaderData?.isMobile ?? false;
+
   return (
     <html lang="fr" data-color-scheme="dark">
       <head>
@@ -38,7 +50,11 @@ export function Layout({ children }: { children: ReactNode }) {
         <ThemeProvider theme={theme}>
           <ClientOnly>
             <CssBaseline />
-            {children}
+            <IsMobileContext value={isMobile}>
+              <MainLayout>
+                {children}
+              </MainLayout>
+            </IsMobileContext>
           </ClientOnly>
         </ThemeProvider>
         <ScrollRestoration />
@@ -49,7 +65,7 @@ export function Layout({ children }: { children: ReactNode }) {
 }
 
 export default function App() {
-  return <Outlet />;
+  return <Outlet />
 }
 
 export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {

@@ -5,7 +5,5 @@
 build
 node_modules
 *.tsbuildinfo
-players.json
-game.json
 .idea
-persistence
+.wrangler
