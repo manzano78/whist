@@ -59,7 +59,7 @@ export async function action({ request, context }: Route.ActionArgs) {
 
   await gameRepository.deleteGames(currentAppUser.id, ids);
 
-  return redirect('/games');
+  return redirect(request.url);
 }
 
 export default function GameListRoute({ loaderData}: Route.ComponentProps) {
@@ -192,7 +192,7 @@ function Test({ pagedList }: { pagedList: Info['loaderData']['pagedList']}) {
   return (
     <>
       <Box marginTop={2} marginBottom={1}>
-        <Form method="post" action="/games">
+        <Form method="post">
           {selectedItems.map((id) => (
             <input
               key={id}
