@@ -1,14 +1,13 @@
 import type { GameRepository } from '~/domain/respositories/game-repository';
 import type { RoundResultRepository } from '~/domain/respositories/round-result-repository';
-import { type Game, getNextRoundInfo } from '~/domain/entities/game';
+import { type Game, getNextRoundInfo, isTerminated } from '~/domain/entities/game';
 import { createOutOfSyncRoundSubmissionError } from '~/domain/entities/errors/out-of-sync-round-submission';
 import type { RoundResult } from '~/domain/entities/round-result';
-import type { RoundDraftRepository } from '~/domain/respositories/round-draft-repository';
 
 export class SaveRoundResultsUseCase {
   constructor(
     private readonly roundResultRepository: RoundResultRepository,
-    private readonly roundDraftRepository: RoundDraftRepository,
+    private readonly gameRepository: GameRepository,
   ) {}
 
   async saveRoundResults(
@@ -22,12 +21,11 @@ export class SaveRoundResultsUseCase {
       throw createOutOfSyncRoundSubmissionError(nextRoundInfo.index, roundIndex);
     }
 
+    game.roundResults.push(roundResult);
+
     await Promise.all([
       this.roundResultRepository.createRoundResult(roundResult, roundIndex, game.id),
-      this.roundDraftRepository.deleteRoundDraft(game.id),
+      isTerminated(game) && this.gameRepository.terminateGame(game.id),
     ]);
-
-    delete game.draft;
-    game.roundResults.push(roundResult);
   }
 }

@@ -13,9 +13,9 @@ export const handle: RouteHandle<Info['loaderData'], Info['params']> = {
 };
 
 export async function loader({ request, context, params }: Route.LoaderArgs) {
-  const { getCurrentAppUser, getGameUseCase } = getApp(context);
+  const { getCurrentAppUser, gameRepository } = getApp(context);
   const currentAppUser = await getCurrentAppUser(request);
-  const game = await getGameUseCase.getGame(params.gameId, currentAppUser);
+  const game = await gameRepository.getGame(currentAppUser.id, params.gameId);
 
   return {
     roundInfos: getRoundInfoList(game).slice(0, game.roundResults.length),

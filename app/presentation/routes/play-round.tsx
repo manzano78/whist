@@ -5,8 +5,10 @@ import { PlayRoundForm } from '~/presentation/features/play-round';
 import { getApp } from '~/presentation/infrastructure/app';
 import { RoundTitle } from '~/presentation/features/play-round/components/round-title';
 import { getGameGlobalProperties, getNextRoundInfo, getRanking, isTerminated } from '~/domain/entities/game';
-import Cookie from 'cookie';
-import type { RoundDraft } from '~/domain/entities/draft';
+import {
+  deleteGameDraftFromCookie,
+  parseGameDraftFromCookie
+} from '~/presentation/infrastructure/game-draft-storage/game-draft-cookie.server';
 
 export const handle: RouteHandle<Info['loaderData']> = {
   navigationConfig: {
@@ -22,21 +24,18 @@ export const handle: RouteHandle<Info['loaderData']> = {
 };
 
 export async function loader({ request, context, params }: Route.LoaderArgs) {
-  const { getGameUseCase, getCurrentAppUser } = getApp(context);
+  const { gameRepository, getCurrentAppUser } = getApp(context);
   const currentAppUser = await getCurrentAppUser(request);
-  const game = await getGameUseCase.getGame(params.gameId, currentAppUser);
+  const game = await gameRepository.getGame(currentAppUser.id, params.gameId);
 
   if (isTerminated(game)) {
     throw redirect(`/games/${game.id}/scores`);
   }
 
-  const cookieHeader = request.headers.get('Cookie');
-  const { [`draft-${game.id}`]: rawDraft } = cookieHeader ? Cookie.parse(cookieHeader) : {} as Record<string, string>;
-  const draftObj = rawDraft ? JSON.parse(rawDraft ) as RoundDraft : undefined;
   const roundInfo = getNextRoundInfo(game);
   const ranking = getRanking(game);
-  const { totalRounds } = getGameGlobalProperties(game);
-  const draft = draftObj && draftObj.roundIndex === roundInfo.index ? draftObj : undefined;
+  const { totalRounds } = getGameGlobalProperties(game.playersInOrder.length);
+  const draft = parseGameDraftFromCookie(game, request.headers.get('Cookie')) ?? undefined;
 
   return {
     roundInfo,
@@ -47,9 +46,9 @@ export async function loader({ request, context, params }: Route.LoaderArgs) {
 }
 
 export async function action({ request, params, context }: Route.ActionArgs) {
-  const { getCurrentAppUser, getGameUseCase, saveRoundResultsUseCase } = getApp(context);
+  const { getCurrentAppUser, gameRepository, saveRoundResultsUseCase } = getApp(context);
   const currentAppUser = await getCurrentAppUser(request);
-  const game = await getGameUseCase.getGame(params.gameId, currentAppUser);
+  const game = await gameRepository.getGame(currentAppUser.id, params.gameId);
   const formData = await request.formData();
   const roundIndex = Number(formData.get('roundIndex'));
   const players = formData.getAll('player') as string[];
@@ -66,13 +65,11 @@ export async function action({ request, params, context }: Route.ActionArgs) {
 
   await saveRoundResultsUseCase.saveRoundResults(roundIndex, roundResult, game);
 
-  if (isTerminated(game)) {
-    return redirect(`/games/${game.id}/scores`);
-  }
+  const redirectionUrl = isTerminated(game) ? `/games/${game.id}/scores` : `/games/${game.id}/play`;
 
-  return redirect(`/games/${game.id}/play`, {
+  return redirect(redirectionUrl, {
     headers: {
-      'Set-Cookie': Cookie.serialize(`draft-${game.id}`, '', { expires: new Date(0) }),
+      'Set-Cookie': deleteGameDraftFromCookie(game.id),
     }
   });
 }

@@ -7,7 +7,6 @@ export default [
     route('new', 'presentation/routes/new-game.tsx'),
     ...prefix(':gameId', [
       route('play', 'presentation/routes/play-round.tsx'),
-      route('save', 'presentation/routes/save-game-round-draft.tsx'),
       route('scores', 'presentation/routes/scores.tsx'),
     ]),
   ]),

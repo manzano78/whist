@@ -11,7 +11,6 @@ import UndoIcon from '@mui/icons-material/Undo';
 import { UncontrolledNumberInputField } from '~/presentation/infrastructure/uncontrolled-number-input-field';
 import { IsMobileContext } from '~/presentation/contexts/is-mobile-context';
 import CheckIcon from '@mui/icons-material/Check';
-import ArrowRightAltIcon from '@mui/icons-material/ArrowRightAlt';
 import type { RoundInfo } from '~/domain/entities/round-info';
 import BackHandIcon from '@mui/icons-material/BackHand';
 

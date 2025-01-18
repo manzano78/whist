@@ -25,6 +25,7 @@
     "@mui/icons-material": "^6.2.1",
     "@mui/lab": "^6.0.0-beta.20",
     "@mui/material": "^6.2.1",
+    "@mui/x-data-grid": "^7.23.6",
     "@prisma/adapter-d1": "^6.1.0",
     "@prisma/client": "^6.1.0",
     "@react-router/cloudflare": "^7.1.0",

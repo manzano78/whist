@@ -1,10 +1,9 @@
 import type { RoundResult } from '~/domain/entities/round-result';
-import type { RoundDraft } from '~/domain/entities/draft';
 import type { RoundInfo } from '~/domain/entities/round-info';
-import type { Round } from '~/domain/entities/round';
 import { createNoMoreNextRoundError } from '~/domain/entities/errors/no-more-next-round';
 import type { RoundScore } from '~/domain/entities/round-score';
 import type { Ranking } from '~/domain/entities/ranking';
+import type { RoundDirection } from '~/domain/entities/round-direction';
 
 const MAX_CARDS = 52;
 const BASE_WIN_POINTS = 20;
@@ -18,12 +17,11 @@ export interface Game {
   ownerId: number;
   roundResults: RoundResult[];
   playersInOrder: string[];
-  draft?: RoundDraft;
 }
 
 export function isTerminated(game: Game): boolean {
   const { length: totalPassedRounds } = game.roundResults;
-  const { totalRounds } = getGameGlobalProperties(game);
+  const { totalRounds } = getGameGlobalProperties(game.playersInOrder.length);
 
   return totalPassedRounds === totalRounds;
 }
@@ -67,7 +65,7 @@ export function getRoundInfoList(game: Game): RoundInfo[] {
     trumpTotalCards,
     noTrumpMaxTotalCards,
     noTrumpTotalRounds,
-  } = getGameGlobalProperties(game);
+  } = getGameGlobalProperties(game.playersInOrder.length);
 
   return Array.from({ length: totalRounds }, (_, i) => getRoundInfo(
     game.playersInOrder,
@@ -85,7 +83,7 @@ export function getNextRoundInfo(game: Game): RoundInfo {
     trumpTotalCards,
     noTrumpMaxTotalCards,
     noTrumpTotalRounds,
-  } = getGameGlobalProperties(game);
+  } = getGameGlobalProperties(game.playersInOrder.length);
   const { length: totalPassedRounds } = game.roundResults;
 
   return getRoundInfo(
@@ -98,8 +96,7 @@ export function getNextRoundInfo(game: Game): RoundInfo {
   );
 }
 
-export function getGameGlobalProperties({ playersInOrder }: Game) {
-  const { length: totalPlayers } = playersInOrder;
+export function getGameGlobalProperties(totalPlayers: number) {
   const trumpTotalCards = MAX_CARDS % totalPlayers === 0
     ? Math.floor(MAX_CARDS / totalPlayers) - 1
     : Math.floor(MAX_CARDS / totalPlayers);
@@ -127,7 +124,7 @@ function getRoundInfo(
     throw createNoMoreNextRoundError();
   }
 
-  let direction: Round['direction'];
+  let direction: RoundDirection;
   let totalCardsPerPlayer: number;
   const { length: totalPlayers } = playersInOrder;
   const index = totalPassedRounds + 1;

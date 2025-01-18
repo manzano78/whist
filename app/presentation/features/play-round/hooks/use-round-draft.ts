@@ -1,6 +1,6 @@
 import { type RefObject, useEffect } from 'react';
 import type { RoundDraft } from '~/domain/entities/draft';
-import Cookie from 'js-cookie';
+import { saveGameDraftToCookie } from '~/presentation/infrastructure/game-draft-storage/game-draft-cookie.client';
 
 export function useRoundDraft(gameId: string, formRef: RefObject<HTMLFormElement | null | undefined>) {
   useEffect(() => {
@@ -43,12 +43,7 @@ export function useRoundDraft(gameId: string, formRef: RefObject<HTMLFormElement
         };
       }
 
-      Cookie.set(`draft-${gameId}`, JSON.stringify(roundDraft), {
-        path: '/',
-        secure: true,
-        sameSite: 'lax',
-        expires: 1,
-      });
+      saveGameDraftToCookie(gameId, roundDraft);
     };
 
     const observeInputChange = (input: HTMLInputElement) => {
